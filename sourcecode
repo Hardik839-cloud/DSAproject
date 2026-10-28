@@ -1,0 +1,204 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_UNIVERSITIES 50
+#define MAX_RESEARCHERS 100
+#define MAX_PROJECTS 100
+
+// Structure to store University details
+typedef struct {
+    int uniId;
+    char name[100];
+    char location[50];
+} University;
+
+// Structure to store Researcher details
+typedef struct {
+    int researcherId;
+    char name[50];
+    int uniId;
+    char department[50];
+} Researcher;
+
+// Structure to store Collaborative Research Project details
+typedef struct {
+    int projectId;
+    char title[150];
+    int leadUniId;
+    char status[30]; // e.g., "Active", "Completed", "Proposed"
+} Project;
+
+// Global arrays and counters
+University universities[MAX_UNIVERSITIES];
+Researcher researchers[MAX_RESEARCHERS];
+Project projects[MAX_PROJECTS];
+
+int uniCount = 0;
+int researcherCount = 0;
+int projectCount = 0;
+
+// Function declarations
+void addUniversity();
+void addResearcher();
+void addProject();
+void displayPlatformData();
+void searchProject();
+
+int main() {
+    int choice;
+    do {
+        printf("\n=========================================\n");
+        printf("    MULTI-UNIVERSITY RESEARCH PLATFORM   \n");
+        printf("=========================================\n");
+        printf("1. Add University\n");
+        printf("2. Add Researcher\n");
+        printf("3. Add Collaborative Project\n");
+        printf("4. Display All Platform Data\n");
+        printf("5. Search Research Project\n");
+        printf("6. Exit\n");
+        printf("Enter your choice: ");
+        
+        if (scanf("%d", &choice) != 1) {
+            printf("Invalid input! Please enter a valid number.\n");
+            while(getchar() != '\n'); // Clear input buffer
+            continue;
+        }
+
+        switch (choice) {
+            case 1:
+                addUniversity();
+                break;
+            case 2:
+                addResearcher();
+                break;
+            case 3:
+                addProject();
+                break;
+            case 4:
+                displayPlatformData();
+                break;
+            case 5:
+                searchProject();
+                break;
+            case 6:
+                printf("Exiting platform. Thank you!\n");
+                break;
+            default:
+                printf("Invalid choice! Please try again.\n");
+        }
+    } while (choice != 6);
+
+    return 0;
+}
+
+// Function to add a new participating university
+void addUniversity() {
+    if (uniCount >= MAX_UNIVERSITIES) {
+        printf("Error: University database is full!\n");
+        return;
+    }
+    printf("Enter University ID: ");
+    scanf("%d", &universities[uniCount].uniId);
+    printf("Enter University Name: ");
+    scanf(" %[^\n]s", universities[uniCount].name);
+    printf("Enter Location: ");
+    scanf(" %[^\n]s", universities[uniCount].location);
+    
+    uniCount++;
+    printf("University added successfully!\n");
+}
+
+// Function to add a researcher associated with a university
+void addResearcher() {
+    if (researcherCount >= MAX_RESEARCHERS) {
+        printf("Error: Researcher database is full!\n");
+        return;
+    }
+    if (uniCount == 0) {
+        printf("Error: Please add at least one university first!\n");
+        return;
+    }
+    printf("Enter Researcher ID: ");
+    scanf("%d", &researchers[researcherCount].researcherId);
+    printf("Enter Researcher Name: ");
+    scanf(" %[^\n]s", researchers[researcherCount].name);
+    printf("Enter Affiliated University ID: ");
+    scanf("%d", &researchers[researcherCount].uniId);
+    printf("Enter Department: ");
+    scanf(" %[^\n]s", researchers[researcherCount].department);
+
+    researcherCount++;
+    printf("Researcher added successfully!\n");
+}
+
+// Function to add a cross-university collaborative project
+void addProject() {
+    if (projectCount >= MAX_PROJECTS) {
+        printf("Error: Project database is full!\n");
+        return;
+    }
+    if (uniCount == 0) {
+        printf("Error: Please add at least one university first!\n");
+        return;
+    }
+    printf("Enter Project ID: ");
+    scanf("%d", &projects[projectCount].projectId);
+    printf("Enter Project Title: ");
+    scanf(" %[^\n]s", projects[projectCount].title);
+    printf("Enter Lead University ID: ");
+    scanf("%d", &projects[projectCount].leadUniId);
+    printf("Enter Project Status (Active/Completed/Proposed): ");
+    scanf(" %[^\n]s", projects[projectCount].status);
+
+    projectCount++;
+    printf("Collaborative Project added successfully!\n");
+}
+
+// Function to display all registered platform data
+void displayPlatformData() {
+    int i;
+    printf("\n--- REGISTERED UNIVERSITIES ---\n");
+    if (uniCount == 0) printf("No universities registered yet.\n");
+    for (i = 0; i < uniCount; i++) {
+        printf("ID: %d | Name: %s | Location: %s\n", 
+            universities[i].uniId, universities[i].name, universities[i].location);
+    }
+
+    printf("\n--- REGISTERED RESEARCHERS ---\n");
+    if (researcherCount == 0) printf("No researchers registered yet.\n");
+    for (i = 0; i < researcherCount; i++) {
+        printf("ID: %d | Name: %s | University ID: %d | Dept: %s\n", 
+            researchers[i].researcherId, researchers[i].name, researchers[i].uniId, researchers[i].department);
+    }
+
+    printf("\n--- COLLABORATIVE RESEARCH PROJECTS ---\n");
+    if (projectCount == 0) printf("No projects registered yet.\n");
+    for (i = 0; i < projectCount; i++) {
+        printf("ID: %d | Title: %s | Lead Uni ID: %d | Status: %s\n", 
+            projects[i].projectId, projects[i].title, projects[i].leadUniId, projects[i].status);
+    }
+}
+
+// Function to search for a specific research project by its ID
+void searchProject() {
+    int searchId, i, found = 0;
+    printf("Enter Project ID to search: ");
+    scanf("%d", &searchId);
+
+    for (i = 0; i < projectCount; i++) {
+        if (projects[i].projectId == searchId) {
+            printf("\n--- Project Found ---\n");
+            printf("Project ID   : %d\n", projects[i].projectId);
+            printf("Title        : %s\n", projects[i].title);
+            printf("Lead Uni ID  : %d\n", projects[i].leadUniId);
+            printf("Status       : %s\n", projects[i].status);
+            found = 1;
+            break;
+        }
+    }
+    if (!found) {
+        printf("Project with ID %d not found.\n", searchId);
+    }
+}
+
